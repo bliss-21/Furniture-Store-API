@@ -285,7 +285,8 @@ namespace API.FurnitureStore.API.Controllers
                 var utcExpiryDate = long.Parse(tokenBeginVerified.Claims
                                         .FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
-                var expiryDate = DateTimeOffset.FromUnixTimeMilliseconds(utcExpiryDate).UtcDateTime;
+                var expiryDate = DateTimeOffset.FromUnixTimeSeconds(utcExpiryDate).UtcDateTime;
+
 
                 if (expiryDate < DateTime.UtcNow)
                     throw new Exception("Token Expired");
