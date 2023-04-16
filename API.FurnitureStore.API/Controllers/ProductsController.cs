@@ -1,5 +1,6 @@
 ﻿using API.FurnitureStore.Data;
 using API.FurnitureStore.Shared;
+using API.FurnitureStore.Shared.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,13 +24,21 @@ namespace API.FurnitureStore.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<Product>> Get()
         {
-            return await _context.Products.ToListAsync();
+            var identity = this.HttpContext.User.Identities.FirstOrDefault();
+            var user = this.HttpContext.User;
+            var http = this.HttpContext;
+
+            return await _context.Products
+                .Include(p => p.ProductCategory)
+                .ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetDetails(int id)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            var product = await _context.Products
+                .Include(p => p.ProductCategory)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (product == null)
                 return BadRequest();
@@ -46,8 +55,17 @@ namespace API.FurnitureStore.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(Product product)
-        { 
+        public async Task<IActionResult> Post([FromBody] Product product)
+        {
+            //Limpiamos si mandan una orden ya que no es posible
+            product.OrderDetails = null;
+
+            var producCategory = await _context.ProductCategories.FirstOrDefaultAsync(x => x.Id == product.ProductCategoryId);
+            if (producCategory == null)
+                return BadRequest("ProductCategory no existe");
+
+            product.ProductCategory = producCategory;
+
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
 
@@ -56,7 +74,14 @@ namespace API.FurnitureStore.API.Controllers
 
         [HttpPut]
         public async Task<IActionResult> Put(Product product)
-        { 
+        {
+            //Limpiamos si mandan una orden ya que no es posible
+            product.OrderDetails = null;
+            var producCategory = await _context.ProductCategories.FirstOrDefaultAsync(x => x.Id == product.ProductCategoryId);
+
+            if (producCategory == null)
+                return BadRequest("ProductCategory no existe");
+
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
 

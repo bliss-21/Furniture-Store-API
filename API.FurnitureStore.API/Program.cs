@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -103,6 +102,8 @@ try
     builder.Services.AddDefaultIdentity<IdentityUser>(options =>
             options.SignIn.RequireConfirmedAccount = false) //La validacion que tendra que hacer
         .AddEntityFrameworkStores<APIFurnitureStoreContext>();// señalamos que contexto tiene que usar
+
+
     #endregion
 
     #region [NLog Config]
@@ -112,12 +113,45 @@ try
 
     var app = builder.Build();
 
+    #region [Init data BD]
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<APIFurnitureStoreContext>();
+        context.Database.Migrate();
+        APIFurnitureStoreContext.SetInitialize(context, dataFake:true);
+    }
+    #endregion
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+
+        app.UseReDoc(options =>
+        {
+            options.DocumentTitle = "Swagger Demo Documentation";
+            options.SpecUrl = "/swagger/v1/swagger.json";
+        });
     }
+
+    app.UseReDoc(c =>
+    {
+        c.RoutePrefix = "docs";
+        c.EnableUntrustedSpec();
+        c.ScrollYOffset(10);
+        c.HideHostname();
+        c.HideDownloadButton();
+        c.ExpandResponses("200,201");
+        c.RequiredPropsFirst();
+        c.NoAutoAuth();
+        c.PathInMiddlePanel();
+        c.HideLoading();
+        c.NativeScrollbars();
+        c.DisableSearch();
+        c.OnlyRequiredInSamples();
+        c.SortPropsAlphabetically();
+    });
 
     app.UseHttpsRedirection();
 
