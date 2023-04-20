@@ -1,5 +1,4 @@
-﻿
-namespace API.FurnitureStore.Testing.ServicesAPI
+﻿namespace API.FurnitureStore.Testing.API.Test.ServicesAPI
 {
     public class EmailServiceTesting
     {
