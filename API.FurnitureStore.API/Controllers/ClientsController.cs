@@ -25,7 +25,7 @@ namespace API.FurnitureStore.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetDetails(int id)
+        public async Task<IActionResult> GetDetail(int id)
         {
             var client = await _context.Clients.FirstOrDefaultAsync(x => x.Id == id);
 
