@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlTypes;
+using System.Security.Claims;
 
 namespace API.FurnitureStore.API.Controllers
 {
@@ -24,9 +25,11 @@ namespace API.FurnitureStore.API.Controllers
         [HttpGet]
         public async Task<IEnumerable<Product>> Get()
         {
-            var identity = this.HttpContext.User.Identities.FirstOrDefault();
-            var user = this.HttpContext.User;
-            var http = this.HttpContext;
+            //var identity = this.HttpContext.User.Identities.FirstOrDefault();
+            //var user = this.HttpContext.User;
+            //var http = this.HttpContext;
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             return await _context.Products
                 .Include(p => p.ProductCategory)

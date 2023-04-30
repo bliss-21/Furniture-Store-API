@@ -20,10 +20,11 @@ namespace API.FurnitureStore.Shared
         public string Name { get; set; }
         
         [Required]
-        [Range(0.001, Double.MaxValue, ErrorMessage = "The field {0} must be greater than {1}.")]
+        [Range(0.001, Double.MaxValue, ErrorMessage = "The field {0} must be greater than 0.")]
         public decimal Price { get; set; }
         
         [Required]
+        [Range(1, int.MaxValue)]
         public int ProductCategoryId { get; set; }
 
         [Required]
