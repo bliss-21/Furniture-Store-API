@@ -29,7 +29,7 @@ namespace API.FurnitureStore.API.Controllers
             //var user = this.HttpContext.User;
             //var http = this.HttpContext;
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             return await _context.Products
                 .Include(p => p.ProductCategory)
