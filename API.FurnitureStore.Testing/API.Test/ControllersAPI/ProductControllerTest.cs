@@ -87,7 +87,7 @@ namespace API.FurnitureStore.Testing.API.Test.ControllersAPI
 
                 var product = new Product()
                 {
-                    Id = 1001,
+                    Id = idThatExist,
                     Name = "Product 1",
                     Price = 1000,
                     ProductCategoryId = 101
@@ -140,6 +140,56 @@ namespace API.FurnitureStore.Testing.API.Test.ControllersAPI
         }
         #endregion
 
+        #region [POST]
+        [Fact]
+        public async Task PostProducttWithIdOk()
+        {
+            using (var context = new APIFurnitureStoreContext(ConfigOptionsDataBaseInMemory.CreateNewContextOptions()))
+            {
+                //Arrange
+                var expectedStatusCode = (int)HttpStatusCode.Created;
+
+                var productCategory = new ProductCategory()
+                {
+                    Id = 101,
+                    Name = "Category A"
+                };
+
+                var product = new Product()
+                {
+                    Id = 1001,
+                    Name = "Product 1",
+                    Price = 1000,
+                    ProductCategoryId = 101
+                };
+
+                await context.AddAsync(productCategory);
+                await context.SaveChangesAsync();
+
+                var controllerTest = new ProductsController(context);
+
+                //Act
+                var actionResult = await controllerTest.Post(product);
+
+                //Assert
+                var createdObjectResult = actionResult as ObjectResult;
+                Assert.NotNull(createdObjectResult);
+                Assert.Equal(expectedStatusCode, createdObjectResult.StatusCode);
+
+                var model = createdObjectResult.Value as Product;
+                Assert.NotNull(model);
+
+                var searchedObjectBd = context.Products.FirstOrDefault(x => x.Id == product.Id);
+                Assert.NotNull(searchedObjectBd);
+
+                Assert.Equal(product.Id, model.Id);
+                Assert.Equal(product.Name, model.Name);
+                Assert.Equal(product.Price, model.Price);
+                Assert.Equal(product.ProductCategoryId, model.ProductCategoryId);
+            }
+        }
+
+        #endregion
 
     }
 }
