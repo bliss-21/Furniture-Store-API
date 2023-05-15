@@ -4,6 +4,7 @@ API REST desarrollada en .Net con arquitectura MVC, incluye registro de usuarios
 ## Requisitos previos
 - .NET Core 6 instalado
 - Entity Framework 6
+- Xunit
 
 ## DataBase
 ![Alt text](https://raw.githubusercontent.com/bliss-21/Furniture-Store-API/main/Docs/furniture_store_BD.png)
