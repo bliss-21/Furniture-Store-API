@@ -7,7 +7,7 @@ API REST desarrollada en .Net con arquitectura MVC, incluye registro de usuarios
 - Xunit
 
 ## Config
-
+## Instalación
 ## DataBase
 ![Alt text](https://raw.githubusercontent.com/bliss-21/Furniture-Store-API/main/Docs/furniture_store_BD.png)
 
